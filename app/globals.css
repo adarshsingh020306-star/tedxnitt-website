@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ted-red: #eb0028;
+}
+
+html {
+  scroll-behavior: initial;
+}
+
+body {
+  background: #0a0a0a;
+  color: #f5f5f0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--ted-red);
+  color: #fff;
+}
+
+/* thin red scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ted-red);
+}
+
+@layer components {
+  /* glassmorphism card */
+  .glass {
+    @apply border border-white/10 bg-white/[0.03] backdrop-blur-md;
+  }
+  .glass-hover {
+    @apply transition-all duration-500 hover:border-ted-red/40 hover:bg-white/[0.06] hover:shadow-[0_0_60px_-15px_rgba(235,0,40,0.4)];
+  }
+  /* huge display headline */
+  .headline {
+    @apply font-display uppercase leading-[0.9] tracking-tight;
+  }
+  .section-pad {
+    @apply px-6 md:px-12 lg:px-24;
+  }
+}
+
+/* film grain overlay */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: -100%;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 8s steps(10) infinite;
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -10%); }
+  20% { transform: translate(-15%, 5%); }
+  30% { transform: translate(7%, -25%); }
+  40% { transform: translate(-5%, 25%); }
+  50% { transform: translate(-15%, 10%); }
+  60% { transform: translate(15%, 0%); }
+  70% { transform: translate(0%, 15%); }
+  80% { transform: translate(3%, 35%); }
+  90% { transform: translate(-10%, 10%); }
+}
+
+/* outlined ghost text */
+.text-stroke {
+  -webkit-text-stroke: 1px rgba(245, 245, 240, 0.25);
+  color: transparent;
+}
+.text-stroke-red {
+  -webkit-text-stroke: 1px rgba(235, 0, 40, 0.6);
+  color: transparent;
+}
