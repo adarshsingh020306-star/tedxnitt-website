@@ -1,8 +1,9 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { PerformanceMonitor } from "@react-three/drei";
 import { MotionValue } from "framer-motion";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
 /* ------------------------------------------------------------------ */
@@ -51,7 +52,8 @@ const haloFragment = /* glsl */ `
   float fbm(vec2 p) {
     float v = 0.0;
     float a = 0.5;
-    for (int i = 0; i < 5; i++) {
+    // 4 octaves — visually identical to 5 here, meaningfully cheaper
+    for (int i = 0; i < 4; i++) {
       v += a * noise(p);
       p = p * 2.03 + vec2(1.7, 9.2);
       a *= 0.5;
@@ -442,26 +444,61 @@ function ScrollRig({ progress }: { progress: Progress }) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Fires onReady once the scene has actually rendered a couple of      */
+/* frames — i.e. shaders are compiled and the GPU is warm. The hero    */
+/* holds its intro (and a loading curtain) until this moment.          */
+function ReadySignal({ onReady }: { onReady?: () => void }) {
+  const frames = useRef(0);
+  const fired = useRef(false);
+  useFrame(() => {
+    if (fired.current) return;
+    frames.current += 1;
+    if (frames.current >= 2) {
+      fired.current = true;
+      onReady?.();
+    }
+  });
+  return null;
+}
+
 export default function Phoenix3D({
   active = true,
   progress = null,
+  onReady,
 }: {
   active?: boolean;
   progress?: Progress;
+  onReady?: () => void;
 }) {
+  // adaptive quality: drop pixel ratio on weak GPUs, restore when smooth
+  const [dpr, setDpr] = useState<number | [number, number]>([1, 1.5]);
+  // fewer embers on small screens
+  const emberCount =
+    typeof window !== "undefined" && window.innerWidth < 768 ? 180 : 320;
+
   return (
     <Canvas
-      dpr={[1, 1.5]}
+      dpr={dpr}
       frameloop={active ? "always" : "never"}
       camera={{ position: [0, 0, 6.4], fov: 42 }}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+      onCreated={(state) => {
+        // pre-compile everything mounted so far in one go
+        state.gl.compile(state.scene, state.camera);
+      }}
       className="!absolute inset-0"
     >
-      <ambientLight intensity={0.15} />
-      <ScrollRig progress={progress} />
-      <FireHalo progress={progress} />
-      <Phoenix progress={progress} />
-      <EmberVortex progress={progress} />
+      <PerformanceMonitor
+        onDecline={() => setDpr(1)}
+        onIncline={() => setDpr([1, 1.5])}
+      >
+        <ambientLight intensity={0.15} />
+        <ScrollRig progress={progress} />
+        <FireHalo progress={progress} />
+        <Phoenix progress={progress} />
+        <EmberVortex count={emberCount} progress={progress} />
+        <ReadySignal onReady={onReady} />
+      </PerformanceMonitor>
     </Canvas>
   );
 }

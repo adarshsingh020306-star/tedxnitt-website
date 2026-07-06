@@ -6,6 +6,12 @@ import { useEffect, useRef } from "react";
 /**
  * Netflix-style title reveal: a deep "ta-dum" (synthesized with WebAudio —
  * no audio file needed), then TEDx NITT stamps in letter by letter.
+ *
+ * The whole sequence is gated on the `start` prop: the hero flips it to
+ * true only after the WebGL scene has compiled and rendered its first
+ * frames, so the intro never fights the GPU for the main thread — this
+ * is what killed the start-up lag.
+ *
  * Browsers block sound before the first user gesture; if blocked, the
  * ta-dum fires on the first click / keypress / touch instead.
  */
@@ -66,30 +72,35 @@ const letters: { ch: string; red: boolean }[] = [
   { ch: "T", red: false },
 ];
 
-const REVEAL_START = 0.9; // seconds before the first letter lands
+// timings are relative to the moment `start` flips true
+const REVEAL_START = 0.55; // ta-dum lands, then the first letter
 const STAGGER = 0.14;
 
-export default function NetflixWordmark() {
+export default function NetflixWordmark({ start = true }: { start?: boolean }) {
   const played = useRef(false);
 
   useEffect(() => {
-    if (played.current) return;
+    if (!start || played.current) return;
     played.current = true;
-    const id = setTimeout(playTaDum, (REVEAL_START - 0.35) * 1000);
+    const id = setTimeout(playTaDum, 120);
     return () => clearTimeout(id);
-  }, []);
+  }, [start]);
 
   return (
     <motion.h1
       className="headline flex items-baseline text-[19vw] leading-none md:text-[13vw]"
       initial={{ filter: "drop-shadow(0 0 0px rgba(235,0,40,0))" }}
-      animate={{
-        filter: [
-          "drop-shadow(0 0 0px rgba(235,0,40,0))",
-          "drop-shadow(0 0 55px rgba(235,0,40,0.85))",
-          "drop-shadow(0 0 22px rgba(235,0,40,0.45))",
-        ],
-      }}
+      animate={
+        start
+          ? {
+              filter: [
+                "drop-shadow(0 0 0px rgba(235,0,40,0))",
+                "drop-shadow(0 0 55px rgba(235,0,40,0.85))",
+                "drop-shadow(0 0 22px rgba(235,0,40,0.45))",
+              ],
+            }
+          : undefined
+      }
       transition={{
         delay: REVEAL_START + letters.length * STAGGER,
         duration: 1.6,
@@ -102,7 +113,9 @@ export default function NetflixWordmark() {
           className={l.red ? "text-ted-red" : "text-ted-bone"}
           style={{ display: "inline-block", transformOrigin: "50% 80%" }}
           initial={{ opacity: 0, scale: 3.2, filter: "blur(14px)" }}
-          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+          animate={
+            start ? { opacity: 1, scale: 1, filter: "blur(0px)" } : undefined
+          }
           transition={{
             delay: REVEAL_START + i * STAGGER,
             duration: 0.55,
