@@ -11,6 +11,8 @@ export const metadata: Metadata = {
 const tiers: Array<(typeof partners)[number]["tier"]> = [
   "Title Sponsor",
   "Event Partner",
+  "Merchandise Partner",
+  "Refreshments Partner",
   "Community Partner",
 ];
 

@@ -6,6 +6,15 @@
       "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
       "runtimeArgs": ["node_modules\\next\\dist\\bin\\next", "dev"],
       "port": 3000
+    },
+    {
+      "name": "orbitdesk",
+      "runtimeExecutable": "C:\\Users\\adarsh laptop\\OneDrive\\Attachments\\ECELL-CRM\\.venv\\Scripts\\python.exe",
+      "runtimeArgs": [
+        "-c",
+        "import sys; sys.path.insert(0, r'C:\\Users\\adarsh laptop\\OneDrive\\Attachments\\ECELL-CRM'); import uvicorn; uvicorn.run('api.app:app', host='127.0.0.1', port=8000)"
+      ],
+      "port": 8000
     }
   ]
 }

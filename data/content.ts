@@ -79,7 +79,21 @@ export const speakers: Speaker[] = [
     edition: "APRICITY · 2022",
   },
   { name: "Speaker Name", title: "Add title", edition: "EQUINOX · 2023" },
-  { name: "Speaker Name", title: "Add title", edition: "PYXIS · 2021" },
+  {
+    name: "Harish Srinivasan",
+    title: "Co-Founder, Infinite Engineers",
+    edition: "APRICITY · 2022",
+  },
+  {
+    name: "Divya Karnad",
+    title: "Marine Conservationist, Founder of InSeason Fish",
+    edition: "PYXIS · 2021",
+  },
+  {
+    name: "Rajat Ubhaykar",
+    title: "Civil Servant and Author",
+    edition: "PYXIS · 2021",
+  },
 ];
 
 // ------------------------------------------------------------
@@ -134,7 +148,7 @@ export const timeline: Edition[] = [
     theme: "PYXIS",
     meaning: "the mariner's compass, drawn in the stars",
     description:
-      "Finding direction in an age with no fixed north. Named for the compass constellation, PYXIS was about the instincts and ideas that guide us when the map runs out.",
+      "Finding direction in an age with no fixed north. Held on 8 January 2022, PYXIS — named for the compass constellation — was about the instincts and ideas that guide us when the map runs out.",
     poster: "/editions/pyxis_2021.png",
   },
 ];
@@ -165,7 +179,12 @@ export const coreTeam: Member[] = [
 // ------------------------------------------------------------
 export type Partner = {
   name: string;
-  tier: "Title Sponsor" | "Event Partner" | "Community Partner";
+  tier:
+    | "Title Sponsor"
+    | "Event Partner"
+    | "Merchandise Partner"
+    | "Refreshments Partner"
+    | "Community Partner";
   description: string;
   logo?: string;
 };
@@ -178,18 +197,23 @@ export const partners: Partner[] = [
       "Placeholder — one or two lines about the title sponsor and what they do.",
   },
   {
-    name: "Partner Name",
-    tier: "Event Partner",
-    description: "Placeholder — a line about this partner and what they do.",
+    name: "Mark Raven",
+    tier: "Merchandise Partner",
+    description:
+      "Wear Your Story — the clothing label behind the official TEDxNITTrichy merchandise.",
+    // drop the logo at /public/partners/mark_raven.png and uncomment:
+    // logo: "/partners/mark_raven.png",
+  },
+  {
+    name: "Credence Cascade Café",
+    tier: "Refreshments Partner",
+    description:
+      "Comfort in every sip — keeping speakers, crew and the audience fuelled through the event.",
+    // logo: "/partners/credence_cascade_cafe.png",
   },
   {
     name: "Partner Name",
     tier: "Event Partner",
-    description: "Placeholder — a line about this partner and what they do.",
-  },
-  {
-    name: "Partner Name",
-    tier: "Community Partner",
     description: "Placeholder — a line about this partner and what they do.",
   },
 ];
